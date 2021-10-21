@@ -65,7 +65,6 @@ const galleryItems = [
 ];
 
 const galleryListEl = document.querySelector("ul.js-gallery");
-console.log(galleryListEl);
 
 function makeGellaryMarkup(ar) {
   const newAr = [...ar];
@@ -92,14 +91,23 @@ function makeGellaryMarkup(ar) {
 const insertMarkup = (galleryListEl.innerHTML =
   makeGellaryMarkup(galleryItems).join(""));
 
-function getOriginalImageUrl(ev) {
-  let newUrl = ev.target.dataset.source;
-  return newUrl;
+function changeOpenedImagesProperties(src, alt) {
+  openedImage.src = src;
+  openedImage.alt = alt;
 }
-function getOriginalImageAlt(ev) {
-  let newAlt = ev.target.alt;
-  return newAlt;
+
+function getOrigins(ev) {
+  changeOpenedImagesProperties(ev.target.dataset.source, ev.target.alt);
 }
+
+//function getOriginalImageUrl(ev) {
+//let newUrl = ev.target.dataset.source;
+//return newUrl;
+//}
+//function getOriginalImageAlt(ev) {
+//let newAlt = ev.target.alt;
+//return newAlt;
+//}
 
 const modalWindow = document.querySelector("div.lightbox");
 const openedImage = document.querySelector(".lightbox__image");
@@ -111,10 +119,8 @@ const imagesAltsList = galleryItems.map((el) => el.description);
 console.log(imagesUrlList);
 
 function openModalWindow(ev) {
-  console.log(modalWindow);
   modalWindow.classList.add("is-open");
-  openedImage.src = getOriginalImageUrl(ev);
-  openedImage.alt = getOriginalImageAlt(ev);
+  getOrigins(ev);
 }
 
 function closeModalWindow(ev) {
@@ -124,18 +130,18 @@ function closeModalWindow(ev) {
 
 function closeModalWindowByEsc(ev) {
   if (ev.code === "Escape") {
-    modalWindow.classList.remove("is-open");
-    openedImage.src = "";
+    closeModalWindow(ev);
   }
 }
 
 function getNextImageUrl(ev) {
-  console.log(ev.code);
   if (ev.code === "ArrowRight") {
     let currentImgUrlNumder = imagesUrlList.indexOf(openedImage.src);
     if (currentImgUrlNumder < imagesUrlList.length - 1) {
-      openedImage.src = imagesUrlList[currentImgUrlNumder + 1];
-      openedImage.alt = imagesAltsList[currentImgUrlNumder + 1];
+      changeOpenedImagesProperties(
+        imagesUrlList[currentImgUrlNumder + 1],
+        imagesAltsList[currentImgUrlNumder + 1]
+      );
     } else openedImage.src = imagesUrlList[0];
   }
 }
@@ -145,8 +151,10 @@ function getPrewImageUrl(ev) {
   if (ev.code === "ArrowLeft") {
     let currentImgUrlNumder = imagesUrlList.indexOf(openedImage.src);
     if (currentImgUrlNumder > 0) {
-      openedImage.src = imagesUrlList[currentImgUrlNumder - 1];
-      openedImage.alt = imagesAltsList[currentImgUrlNumder - 1];
+      changeOpenedImagesProperties(
+        imagesUrlList[currentImgUrlNumder - 1],
+        imagesAltsList[currentImgUrlNumder - 1]
+      );
     } else openedImage.src = imagesUrlList[imagesUrlList.length - 1];
   }
 }
